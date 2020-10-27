@@ -1,1 +1,1 @@
-# Email-Analyzer-Macro-for-Outlook
+# Email analyzer macro for Outlook
