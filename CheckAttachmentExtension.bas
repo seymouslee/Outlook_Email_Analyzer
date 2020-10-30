@@ -5,7 +5,7 @@ Public directory As String
 Public checkExtension As Boolean
 Public checkExtensionAll As Boolean
 
-Sub Extract2()
+Sub Extract()
     Dim olItem As Outlook.MailItem, olMsg As Outlook.MailItem
     directory = CurDir() & "\2202Macro\"
 
@@ -43,12 +43,11 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
             shortf = Replace(Atmt.filename, " ", "_")
             filename = DestFolder & shortf
             Atmt.SaveAsFile filename
-            cutil
-            Wait (1)
-            readEx
-            If checkExtension = True Then
-                'sub to move the output file to another folder
-                moveToQuarantine (shortf)
+            cutil                           'run certUtil to find the certificate for the file
+            Wait (1)                        'give time for certUtil in cmd to execute before moving on
+            readEx                          'reading the certificate for the file and check if extension is potentially malicious
+            If checkExtension = True Then   'if the extension turns out to be potentially malicious
+                moveToQuarantine (shortf)   'move the certification to another folder where user can access later on
                 deletefiles
             End If
             i = i + 1
@@ -63,6 +62,7 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
         goExplorer = MsgBox(Prompt:="Certification file and header report can be found in " & CurDir() & "\2202Quarantine\" & _
         vbNewLine & vbNewLine & "Do you want to open directory in file explorer?", Buttons:=vbOKCancel)
         If goExplorer = vbOK Then
+            'if the user wants to see the file, the macro will open the directory
             Shell "cmd /c start """" explorer.exe " & CurDir() & "\2202Quarantine\", vbHide
         End If
     End If
@@ -74,7 +74,6 @@ Sub cutil()
     c = "certutil -encode " & filename & " " & directory & "output.txt"
     Call Shell("cmd.exe /S /K" & c, vbHide)
 End Sub
-
 
 Sub deletefiles()
     On Error Resume Next
@@ -91,8 +90,6 @@ Sub moveToQuarantine(filename As String)
     destinationD = CurDir() & "\2202Quarantine\cert_" & filename
 
     FSO.MoveFile source:=sourceD, destination:=destinationD
-
-    'MsgBox (SourceFileName + " Moved to " + DestinFileName)
 End Sub
 
 Sub readEx()
@@ -101,9 +98,8 @@ Dim FSO, FileIn, txtLine
 Dim fdirectory As String
 fdirectory = directory & "output.txt"
 
-'Dim extenstions(10) As String
+'executable file extensions in base64
 extenstions = Array("TVo", "XyeoiQ", "yv66vg", "QkxJMjIzUQ", "HX0", "183Gmg", "UEsDBBQA")
-'extenstions = Array("aGVs", "support", "xyz")
 
 Set FSO = CreateObject("Scripting.FileSystemObject")
 Set FileIn = FSO.OpenTextFile(fdirectory, 1)
