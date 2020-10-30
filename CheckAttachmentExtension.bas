@@ -4,6 +4,8 @@ Public shortf As String
 Public directory As String
 Public checkExtension As Boolean
 Public checkExtensionAll As Boolean
+Public errorlog() As String
+Public errorEx, allerrors As String
 
 Sub Extract()
     Dim olItem As Outlook.MailItem, olMsg As Outlook.MailItem
@@ -18,7 +20,7 @@ End Sub
 Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As String)
 
     Dim objAtt As Outlook.Attachment
-    Dim i As Integer
+    Dim i, x As Integer
     Dim ex As String
     Dim started As Single: started = Timer
     Dim goExplorer As Integer
@@ -49,6 +51,8 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
             If checkExtension = True Then   'if the extension turns out to be potentially malicious
                 moveToQuarantine (shortf)   'move the certification to another folder where user can access later on
                 deletefiles
+                ReDim Preserve errorlog(i)
+                errorlog(i) = shortf & " may actually be " & errorEx & " file"  'for error logging
             End If
             i = i + 1
             checkExtension = False
@@ -57,8 +61,14 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
     
     deletefiles
     
+    x = 0
+    Do While x <= i - 1
+        allerrors = allerrors & errorlog(x) & Chr(10)
+        x = x + 1
+    Loop
+    
     If checkExtensionAll = True Then
-        MsgBox "Warning: attachment(s) in this email may be malicious", vbExclamation
+        MsgBox "Warning: attachment(s) in this email may be malicious" & Chr(10) & Chr(10) & allerrors, vbExclamation
         goExplorer = MsgBox(Prompt:="Certification file and header report can be found in " & CurDir() & "\2202Quarantine\" & _
         vbNewLine & vbNewLine & "Do you want to open directory in file explorer?", Buttons:=vbOKCancel)
         If goExplorer = vbOK Then
@@ -99,7 +109,8 @@ Dim fdirectory As String
 fdirectory = directory & "output.txt"
 
 'executable file extensions in base64
-extenstions = Array("TVo", "XyeoiQ", "yv66vg", "QkxJMjIzUQ", "HX0", "183Gmg", "UEsDBBQA")
+Extensions = Array("TVo", "XyeoiQ", "yv66vg", "QkxJMjIzUQ", "HX0", "183Gmg", "UEsDBBQA")
+exname = Array(".exe (executable)", ".jar (JavaScript source code script)", ".jar (JavaScript source code script)", ".bin (Binary executable)", ".ws (Microsoft Windows script)", ".wmf (Windows Metafile Format)", ".jar (JavaScript source code script)")
 
 Set FSO = CreateObject("Scripting.FileSystemObject")
 Set FileIn = FSO.OpenTextFile(fdirectory, 1)
@@ -107,10 +118,11 @@ Set FileIn = FSO.OpenTextFile(fdirectory, 1)
 Do Until FileIn.AtEndOfStream
     txtLine = FileIn.ReadLine
     If Len(txtLine) > 0 Then
-        For i = 0 To UBound(extenstions)
-            If InStr(1, txtLine, extenstions(i), vbTextCompare) > 0 Then
+        For i = 0 To UBound(Extensions)
+            If InStr(1, txtLine, Extensions(i), vbTextCompare) > 0 Then
                     checkExtension = True
                     checkExtensionAll = True
+                    errorEx = exname(i)
                 Exit For
             End If
         Next
