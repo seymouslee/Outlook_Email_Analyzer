@@ -21,6 +21,7 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
     Dim i As Integer
     Dim ex As String
     Dim started As Single: started = Timer
+    Dim goExplorer As Integer
 
     
     'If the directory doesn't exist, then create it
@@ -55,9 +56,15 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
         End If
     Next Atmt
     
+    deletefiles
+    
     If checkExtensionAll = True Then
-        MsgBox "Warning: attachment(s) in this email may be malicious" _
-        & vbCrLf & "Certification file and header report can be found in " & CurDir() & "\2202Quarantine\", vbExclamation
+        MsgBox "Warning: attachment(s) in this email may be malicious", vbExclamation
+        goExplorer = MsgBox(Prompt:="Certification file and header report can be found in " & CurDir() & "\2202Quarantine\" & _
+        vbNewLine & vbNewLine & "Do you want to open directory in file explorer?", Buttons:=vbOKCancel)
+        If goExplorer = vbOK Then
+            Shell "cmd /c start """" explorer.exe " & CurDir() & "\2202Quarantine\", vbHide
+        End If
     End If
 
 End Sub
@@ -67,6 +74,7 @@ Sub cutil()
     c = "certutil -encode " & filename & " " & directory & "output.txt"
     Call Shell("cmd.exe /S /K" & c, vbHide)
 End Sub
+
 
 Sub deletefiles()
     On Error Resume Next
