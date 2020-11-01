@@ -17,3 +17,8 @@ This macro checks if the attachments in the email are potentially malicious. In 
    - you can choose to rename the macro like "Check Attachment" for easier reference
 5. when you go back to the home page, there should be the macro displayed on the ribbon under the "Home" tab!
 6. Select an email you would like to check and run the macro.
+   
+## Notes:
+
+- if you would like to re-create attachments shown in the video, the files are stored in the folder called "FileDemo".
+- if there are any errors with the file path, please open the "Document" directory in file explorer and try again.
