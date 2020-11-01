@@ -2,6 +2,8 @@
 
 This macro checks if the attachments in the email are potentially malicious. In malware phishing attacks, attackers would masqurade malware file extension such executables (.exe) and Java Archive file (.jar) as another file extension such as PDF or text files to appear normal to the victim. Our macro checks the attachment's actual file extension by checking its certificate. If the file turns out to be malicious, our macro will warn the user and save the file certificate and a report of the email for future investigation.
 
+You can view our project demostration here: https://www.youtube.com/watch?v=NncG8rnJCPA&feature=youtu.be
+
 ## How to add the macro in Microsoft Outlook
 
 1. Press Alt + F11 to open up the Visual Basic window
