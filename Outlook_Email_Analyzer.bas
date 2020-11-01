@@ -101,7 +101,7 @@ Sub moveToQuarantine(filename As String)
 
     Set FSO = CreateObject("Scripting.Filesystemobject")
     sourceD = directory & "output.txt"
-    destinationD = CurDir() & "\2202Quarantine\cert_" & filename
+    destinationD = CurDir() & "\2202Quarantine\cert_" & fn & ".txt"
 
     FSO.MoveFile source:=sourceD, destination:=destinationD
 End Sub
@@ -110,6 +110,9 @@ Sub readEx()
 
 Dim FSO, FileIn, txtLine
 Dim fdirectory As String
+Dim readline As Integer
+Dim found As Boolean
+
 fdirectory = directory & "output.txt"
 
 'executable file extensions in base64
@@ -119,17 +122,24 @@ exname = Array(".exe (executable)", ".jar (JavaScript source code script)", ".ja
 Set FSO = CreateObject("Scripting.FileSystemObject")
 Set FileIn = FSO.OpenTextFile(fdirectory, 1)
 
+readline = 1
+found = False
 Do Until FileIn.AtEndOfStream
-    txtLine = FileIn.ReadLine
-    If Len(txtLine) > 0 Then
+    txtLine = FileIn.readline
+    If Len(txtLine) > 0 And readline = 2 Then
         For i = 0 To UBound(Extensions)
             If InStr(1, txtLine, Extensions(i), vbTextCompare) > 0 Then
                     checkExtension = True
                     checkExtensionAll = True
                     errorEx = exname(i)
+                    found = True
                 Exit For
             End If
         Next
+    End If
+    readline = readline + 1
+    If found = True Then
+        Exit Do
     End If
 Loop
 
