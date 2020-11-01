@@ -77,6 +77,8 @@ Sub SaveEmailAttachmentsToFolder(olItem As Outlook.MailItem, DestFolder As Strin
             'if the user wants to see the file, the macro will open the directory
             Shell "cmd /c start """" explorer.exe " & CurDir() & "\2202Quarantine\", vbHide
         End If
+    Else
+        MsgBox "Scan complete: nothing wrong with the attachments"
     End If
 
 End Sub
