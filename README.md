@@ -24,5 +24,3 @@ You can view our project demostration here: https://www.youtube.com/watch?v=NncG
 
 - if you would like to re-create attachments shown in the video, the files are stored in the folder called "FileDemo".
 - if there are any errors with the file path, please open the "Document" directory in file explorer and try again.
-
-- Team Inconspicuous 
